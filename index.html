@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    section {
+      margin-bottom: 20px;
+    }
+    label, input, button, select {
+      display: block;
+      margin: 10px 0;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    canvas {
+      max-width: 600px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+<h1>Expense Tracker</h1>
+
+<section>
+  <h2>Add New Cost</h2>
+  <label for="addSum">Sum:</label>
+  <input type="number" id="addSum" placeholder="Enter sum">
+  <label for="addCategory">Category:</label>
+  <select id="addCategory">
+    <option value="Fruits and vegetables">Fruits and vegetables</option>
+    <option value="Dairy">Dairy</option>
+    <option value="Bakery">Bakery</option>
+    <option value="Meat and Seafood">Meat and Seafood</option>
+    <option value="Beverages">Beverages</option>
+    <option value="Packaged and Canned Goods">Packaged and Canned Goods</option>
+    <option value="Frozen Foods">Frozen Foods</option>
+    <option value="Snacks and Confectionery">Snacks and Confectionery</option>
+    <option value="Personal Care and Household Items">Personal Care and Household Items</option>
+    <option value="Health and Wellness">Health and Wellness</option>
+    <option value="Baby Products">Baby Products</option>
+    <option value="Pet Supplies">Pet Supplies</option>
+    <option value="Cooking and Baking Essentials">Cooking and Baking Essentials</option>
+    <option value="Alcohol and Tobacco Products">Alcohol and Tobacco Products</option>
+    <option value="Ready-to-Eat and Prepared Foods">Ready-to-Eat and Prepared Foods</option>
+    </select>
+  <label for="addDescription">Description:</label>
+  <input type="text" id="addDescription" placeholder="Enter description">
+  <button id="addButton">Add Cost</button>
+  <p id="addStatus"></p>
+</section>
+
+<section>
+  <h2>View Monthly Report</h2>
+  <label for="reportMonth">Month:</label>
+  <select id="reportMonth">
+    <option value="01">January</option>
+    <option value="02">February</option>
+    <option value="03">March</option>
+    <option value="04">April</option>
+    <option value="05">May</option>
+    <option value="06">June</option>
+    <option value="07">July</option>
+    <option value="08">August</option>
+    <option value="09">September</option>
+    <option value="10">October</option>
+    <option value="11">November</option>
+    <option value="12">December</option>
+  </select>
+  <label for="reportYear">Year:</label>
+  <input type="number" id="reportYear" placeholder="Enter year">
+  <button id="generateReportButton">Generate Report</button>
+  <pre id="reportOutput"></pre>
+</section>
+
+<section>
+  <h2>Monthly Cost Report</h2>
+  <canvas id="costPieChart"></canvas>
+  <table id="costTable" border="1">
+    <thead>
+    <tr>
+      <th>Sum</th>
+      <th>Category</th>
+      <th>Description</th>
+      <th>Date</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<script src="script.js" type="module"></script>
+</body>
+</html>
