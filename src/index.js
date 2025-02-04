@@ -1,12 +1,11 @@
-import { IndexedDBWrapper } from './utils/indexedDBWrapper.js';
+import { Idb } from './utils/Idb.js'; // Corrected import to match the exported class
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import Chart from "chart.js/auto";
 
-
-
+// Initialize React root element
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
@@ -15,8 +14,11 @@ root.render(
 );
 
 // Initialize IndexedDB
-const db = new IndexedDBWrapper("ExpenseDB", 1);
-await db.init([{ name: "costs", options: { keyPath: "id", autoIncrement: true } }]);
+const db = new Idb("ExpenseDB", 1);
+
+(async () => {
+    await db.init([{ name: "costs", options: { keyPath: "id", autoIncrement: true } }]);
+})();
 
 // DOM Elements
 const addSum = document.getElementById("addSum");
@@ -33,10 +35,10 @@ const reportOutput = document.getElementById("reportOutput");
 const costPieChart = document.getElementById("costPieChart");
 
 // Add a new cost
-addButton.addEventListener("click", async () => {
-    const sum = parseFloat(addSum.value);
-    const category = addCategory.value.trim();
-    const description = addDescription.value.trim();
+addButton?.addEventListener("click", async () => {
+    const sum = parseFloat(addSum?.value);
+    const category = addCategory?.value.trim();
+    const description = addDescription?.value.trim();
 
     if (!sum || !category || !description) {
         addStatus.innerText = "Please fill in all fields.";
@@ -62,9 +64,9 @@ addButton.addEventListener("click", async () => {
 });
 
 // Generate a detailed monthly report
-generateReportButton.addEventListener("click", async () => {
-    const month = reportMonth.value;
-    const year = reportYear.value;
+generateReportButton?.addEventListener("click", async () => {
+    const month = reportMonth?.value;
+    const year = reportYear?.value;
 
     if (!month || !year) {
         reportOutput.innerText = "Please select both month and year.";
@@ -76,13 +78,12 @@ generateReportButton.addEventListener("click", async () => {
         const filteredCosts = allCosts.filter((cost) => {
             const costDate = new Date(cost.date);
             return (
-                costDate.getMonth() + 1 === parseInt(month) && costDate.getFullYear() === parseInt(year)
+                costDate.getMonth() + 1 === parseInt(month) &&
+                costDate.getFullYear() === parseInt(year)
             );
         });
 
-        //reportOutput.innerText = JSON.stringify(filteredCosts, null, 2);
-
-        // Generate table
+        // Populate table with filtered costs
         populateTable(filteredCosts);
 
         // Generate pie chart
@@ -99,25 +100,28 @@ generateReportButton.addEventListener("click", async () => {
 
 // Populate the table
 function populateTable(costs) {
-    const tableBody = document.getElementById("costTable").querySelector("tbody");
+    const tableBody = document.getElementById("costTable")?.querySelector("tbody");
+    if (!tableBody) return;
+
     tableBody.innerHTML = ""; // Clear existing rows
 
     costs.forEach((cost) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-      <td>${cost.sum}</td>
-      <td>${cost.category}</td>
-      <td>${cost.description}</td>
-      <td>${new Date(cost.date).toLocaleDateString()}</td>
-    `;
+            <td>${cost.sum}</td>
+            <td>${cost.category}</td>
+            <td>${cost.description}</td>
+            <td>${new Date(cost.date).toLocaleDateString()}</td>
+        `;
         tableBody.appendChild(row);
     });
 }
 
-
 // Generate the pie chart
 function generatePieChart(data) {
-    const ctx = costPieChart.getContext("2d");
+    const ctx = costPieChart?.getContext("2d");
+    if (!ctx) return;
+
     const categories = Object.keys(data);
     const totals = Object.values(data);
 

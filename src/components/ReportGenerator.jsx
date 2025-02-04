@@ -1,7 +1,7 @@
-// src/components/ReportGenerator.jsx
+// src/components/reportGenerator.jsx
 import React, { useState } from "react";
 
-const ReportGenerator = ({ onGenerate }) => {
+const reportGenerator = ({ onGenerate }) => {
     const [month, setMonth] = useState("");
     const [year, setYear] = useState("");
 
@@ -30,4 +30,4 @@ const ReportGenerator = ({ onGenerate }) => {
     );
 };
 
-export default ReportGenerator;
+export default reportGenerator;

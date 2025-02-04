@@ -1,7 +1,7 @@
-// src/components/ReportTable.jsx
+// src/components/reportTable.jsx
 import React from "react";
 
-const ReportTable = ({ costs }) => {
+const reportTable = ({ costs }) => {
     return (
         <div>
             <h2>Monthly Cost Report</h2>
@@ -29,4 +29,4 @@ const ReportTable = ({ costs }) => {
     );
 };
 
-export default ReportTable;
+export default reportTable;

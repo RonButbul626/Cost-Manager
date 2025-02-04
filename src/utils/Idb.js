@@ -1,4 +1,4 @@
-export class IndexedDBWrapper {
+export class Idb {
     constructor(dbName, version) {
         this.dbName = dbName;
         this.version = version;

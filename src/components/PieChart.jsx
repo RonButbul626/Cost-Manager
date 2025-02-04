@@ -1,8 +1,8 @@
-// src/components/PieChart.jsx
+// src/components/pieChart.jsx
 import React, { useRef, useEffect } from "react";
 import Chart from "chart.js/auto";
 
-const PieChart = ({ data }) => {
+const pieChart = ({ data }) => {
     const canvasRef = useRef();
 
     useEffect(() => {
@@ -24,4 +24,4 @@ const PieChart = ({ data }) => {
     return <canvas ref={canvasRef} />;
 };
 
-export default PieChart;
+export default pieChart;
