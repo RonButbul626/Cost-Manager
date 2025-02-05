@@ -45,6 +45,17 @@ const App = () => {
     return (
         <div>
             <h1>Expense Tracker</h1>
+            {/* שימוש ב-AddCost להוספת הוצאה חדשה */}
+            <AddCost onAdd={addCost} />
+
+            {/* כפתור ליצירת דוחות */}
+            <ReportGenerator onGenerate={generateReport} />
+
+            {/* טבלת הדוחות */}
+            {filteredCosts.length > 0 && <ReportTable costs={filteredCosts} />}
+
+            {/* גרף דוחות לפי קטגוריות */}
+            {Object.keys(categoryTotals).length > 0 && <PieChart data={categoryTotals} />}
         </div>
     );
 };
