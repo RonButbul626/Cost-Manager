@@ -59,4 +59,16 @@ export class IndexedDBWrapper {
             request.onerror = (event) => reject(event.target.error);
         });
     }
+
+    async delete(storeName, id) {
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(storeName, "readwrite");
+            const store = transaction.objectStore(storeName);
+            const request = store.delete(id);
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
+        });
+    }
+
 }

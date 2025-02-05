@@ -1,62 +1,163 @@
+/* 🎨 עיצוב כללי */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f9f9f9;
-}
-
-h1 {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
     text-align: center;
-    color: #333;
 }
 
-section {
-    margin-bottom: 20px;
+/* 📌 הקובץ הראשי - מחלק את הדף */
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 20px auto;
+    gap: 20px;
+}
+
+/* 📍 הצד השמאלי - כולל טפסים */
+.left-section {
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 📍 הצד הימני - מכיל את הגרף */
+.right-section {
+    width: 45%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 📌 עיצוב הקופסאות */
+.card {
+    background-color: #ffffff;
     padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
 }
 
-label, input, button, select {
-    display: block;
-    margin: 10px 0;
-    padding: 8px 12px;
-    font-size: 14px;
+/* 📌 תצוגת דו"ח ומחיקה בשני טורים */
+.report-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* 📍 עיצוב החלק של הדו"ח */
+.report-section {
+    width: 50%;
+}
+
+/* 📍 עיצוב החלק של מחיקת פריטים */
+/* 📌 עיצוב הקוביה של Delete Item */
+/* 📌 סידור הקוביה של Delete Item */
+.delete-section {
     width: 100%;
-    max-width: 300px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-button {
+/* 📌 שיפור שדה החיפוש */
+.delete-section input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* מונע overflow */
+}
+
+/* 📌 שיפור כפתור החיפוש */
+.delete-section button {
+    width: 100%;
+    padding: 12px;
     background-color: #007bff;
     color: white;
     border: none;
-    cursor: pointer;
     border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.delete-section button:hover {
+    background-color: #0056b3;
+}
+
+
+
+/* 📌 התאמה לשדות קלט */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* 📌 עיצוב כפתורים */
+button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
-canvas {
-    max-width: 600px;
-    margin: 20px auto;
-    display: block;
-}
-
+/* 📌 הגבלת גודל טבלה */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
 }
 
-table th, table td {
-    border: 1px solid #ddd;
+th, td {
     padding: 10px;
-    text-align: left;
+    border: 1px solid #ddd;
+    text-align: center;
 }
 
-table th {
-    background-color: #f2f2f2;
+/* 📌 ביטול התאימות לניידים עבור הגרף */
+.chart-container {
+    width: 450px;  /* ✅ קביעת גודל קבוע לגרף */
+    height: 450px;
+    max-width: 450px;
+    max-height: 450px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
 }
+
+/* מבטיח שהגרף לא יצטמצם במסכים קטנים */
+.right-section canvas {
+    width: 450px !important;
+    height: 450px !important;
+    max-width: 450px;
+    max-height: 450px;
+}
+
