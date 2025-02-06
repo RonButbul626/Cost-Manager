@@ -3,8 +3,9 @@ import AddCost from "./components/AddCost";
 import ReportGenerator from "./components/ReportGenerator";
 import ReportTable from "./components/ReportTable";
 import PieChart from "./components/PieChart";
-import DeleteItem from "./components/deleteItem"; // שים לב ל-camelCase
+import DeleteItem from "./components/deleteItem";
 import { IndexedDBWrapper } from "./utils/indexedDBWrapper";
+import { Container, Grid, Card, CardContent, Typography } from "@mui/material";
 
 const db = new IndexedDBWrapper("ExpenseDB", 1);
 
@@ -12,6 +13,29 @@ const App = () => {
     const [costs, setCosts] = useState([]);
     const [filteredCosts, setFilteredCosts] = useState([]);
     const [categoryTotals, setCategoryTotals] = useState({});
+
+    const generateReport = (month, year) => {
+        const filtered = costs.filter((cost) => {
+            const costDate = new Date(cost.date);
+            return (
+                costDate.getMonth() + 1 === parseInt(month) &&
+                costDate.getFullYear() === parseInt(year)
+            );
+        });
+
+        if (filtered.length === 0) {
+            alert("There are no products for the requested time.");
+            return;
+        }
+
+        setFilteredCosts(filtered);
+        setCategoryTotals(
+            filtered.reduce((acc, cost) => {
+                acc[cost.category] = (acc[cost.category] || 0) + cost.sum;
+                return acc;
+            }, {})
+        );
+    };
 
     useEffect(() => {
         const initDB = async () => {
@@ -28,36 +52,9 @@ const App = () => {
         setCosts((prev) => [...prev, cost]); // מעדכן את המערכת
     };
 
-
-    // ✅ פונקציה להפקת דוח לפי חודש ושנה
-    const generateReport = async (month, year) => {
-        const allCosts = await db.getAll("costs");
-
-        const filtered = allCosts.filter((cost) => {
-            const costDate = new Date(cost.date);
-            return (
-                costDate.getMonth() + 1 === parseInt(month) &&
-                costDate.getFullYear() === parseInt(year)
-            );
-        });
-
-        if (filtered.length === 0) {
-            alert("There are no products for the requested time.");
-            return;
-        }
-
-        setFilteredCosts(filtered);
-
-        const totals = filtered.reduce((acc, cost) => {
-            acc[cost.category] = (acc[cost.category] || 0) + cost.sum;
-            return acc;
-        }, {});
-        setCategoryTotals(totals);
-    };
-
     const deleteCost = async (id) => {
         try {
-            await db.delete("costs", id);  // ✅ קריאה לפונקציה החדשה
+            await db.delete("costs", id);
             setCosts((prev) => prev.filter((cost) => cost.id !== id));
             alert("The item has been successfully deleted.");
         } catch (error) {
@@ -67,48 +64,67 @@ const App = () => {
     };
 
     return (
-        <div className="main-container">
-            {/* אזור הטפסים בצד שמאל */}
-            <div className="left-section">
-                <div className="card">
-                    <h2>Add New Cost</h2>
+        <Container>
+            <Typography variant="h3" align="center" gutterBottom>
+                Expense Tracker
+            </Typography>
+
+            <Card sx={{ marginBottom: 3, padding: 2 }}>
+                <CardContent>
                     <AddCost onAdd={addCost} existingCosts={costs} />
-                </div>
+                </CardContent>
+            </Card>
 
-                {/* 📌 חלוקה לשני טורים - דוח ומחיקה */}
-                <div className="report-container">
-                    <div className="card report-section">
-                        <h2>View Monthly Report</h2>
-                        <ReportGenerator onGenerate={generateReport}/>
-                    </div>
 
-                    <div className="card delete-section">
-                        <h2>Delete Item</h2>
-                        <DeleteItem costs={costs} onDelete={deleteCost}/>
-                    </div>
-                </div>
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                    <Card sx={{ padding: 2, height: "100%" }}> {/* גובה מלא */}
+                        <CardContent>
+                            <Typography variant="h5" gutterBottom>
+                                View Monthly Report
+                            </Typography>
+                            <ReportGenerator onGenerate={(month, year) => generateReport(month, year)} />
+                        </CardContent>
+                    </Card>
+                </Grid>
 
-                {filteredCosts.length > 0 && (
-                    <div className="card">
-                        <h2>Monthly Cost Report</h2>
+                <Grid item xs={12} md={6}>
+                    <Card sx={{ padding: 2, height: "100%" }}> {/* גובה מלא */}
+                        <CardContent>
+                            <Typography variant="h5" gutterBottom>
+                                Delete Item
+                            </Typography>
+                            <DeleteItem costs={costs} onDelete={deleteCost} />
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+
+            {/* דוח חודשי */}
+            {filteredCosts.length > 0 && (
+                <Card sx={{ marginTop: 3, padding: 2 }}>
+                    <CardContent>
+                        <Typography variant="h5" gutterBottom>
+                            Monthly Cost Report
+                        </Typography>
                         <ReportTable costs={filteredCosts} />
-                    </div>
-                )}
-            </div>
+                    </CardContent>
+                </Card>
+            )}
 
-            {/* אזור הגרף בצד ימין */}
-            <div className="right-section">
-                {Object.keys(categoryTotals).length > 0 && (
-                    <div className="card">
-                        <h2>Category Breakdown</h2>
+            {/* גרף דוחות לפי קטגוריות */}
+            {Object.keys(categoryTotals).length > 0 && (
+                <Card sx={{ marginTop: 3, padding: 2 }}>
+                    <CardContent>
+                        <Typography variant="h5" gutterBottom>
+                            Category Breakdown
+                        </Typography>
                         <PieChart data={categoryTotals} />
-                    </div>
-                )}
-            </div>
-        </div>
+                    </CardContent>
+                </Card>
+            )}
+        </Container>
     );
-
-
 };
 
 export default App;
