@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./ReportGenerator.css";
 
 const ReportGenerator = ({ db, setFilteredCosts }) => {
     const [month, setMonth] = useState("");
     const [year, setYear] = useState("");
-    const [filteredCosts, setLocalFilteredCosts] = useState([]); // Local state for filtered costs
+    const [filteredCosts, setLocalFilteredCosts] = useState([]);
+    const [reportTitle, setReportTitle] = useState("Filtered Costs");
 
     const handleGenerate = async () => {
         if (!month || !year) {
@@ -25,19 +26,42 @@ const ReportGenerator = ({ db, setFilteredCosts }) => {
                 );
             });
 
-            setFilteredCosts(filtered); // Update filtered costs in the parent component
-            setLocalFilteredCosts(filtered); // Update local state for this component
-            console.log("Filtered costs:", filtered);
+            // Sort the filtered costs by category, then by date
+            const sortedFilteredCosts = filtered.sort((a, b) => {
+                if (a.category.localeCompare(b.category) === 0) {
+                    return new Date(a.date) - new Date(b.date); // Sort by date if categories match
+                }
+                return a.category.localeCompare(b.category); // Otherwise, sort by category
+            });
+
+            // Update filtered costs and title
+            setFilteredCosts(sortedFilteredCosts);
+            setLocalFilteredCosts(sortedFilteredCosts);
+            setReportTitle(`Filtered Costs: ${monthName(month)} ${year}`);
+            console.log("Filtered costs:", sortedFilteredCosts);
         } catch (error) {
             console.error("Error generating report:", error);
         }
     };
 
-    // Ensure costs are always updated when filtered costs change
-    useEffect(() => {
-        console.log("Filtered costs updated:", filteredCosts);
-        setFilteredCosts(filteredCosts); // Synchronize filtered costs with parent state
-    }, [filteredCosts, setFilteredCosts]);
+    // Utility function to get the month name
+    const monthName = (monthNumber) => {
+        const months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ];
+        return months[parseInt(monthNumber, 10) - 1] || "";
+    };
 
     return (
         <div className="report-generator-wrapper">
@@ -83,7 +107,7 @@ const ReportGenerator = ({ db, setFilteredCosts }) => {
 
             {/* Report Table */}
             <div className="report-table-container">
-                <h3 className="table-title">Filtered Costs</h3>
+                <h3 className="table-title">{reportTitle}</h3>
                 <table className="filtered-table">
                     <thead>
                         <tr>
