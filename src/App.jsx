@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import AddCost from "./components/AddCost";
 import ReportTable from "./components/ReportTable";
 import ReportGenerator from "./components/ReportGenerator";
+import PieChart from "./components/PieChart";
 import { Idb } from "./utils/Idb";
 import "./App.css";
 
 const db = new Idb("ExpenseDB", 1);
 
 const App = () => {
-    const [costs, setCosts] = useState([]);
+    const [costs, setCosts] = useState([]); // All costs
     const [editingCost, setEditingCost] = useState(null);
     const [filteredCosts, setFilteredCosts] = useState([]);
 
@@ -23,6 +24,13 @@ const App = () => {
         initDB();
     }, []);
 
+    const pieChartData = filteredCosts.length > 0
+        ? filteredCosts.reduce((acc, cost) => {
+              acc[cost.category] = (acc[cost.category] || 0) + 1;
+              return acc;
+          }, {})
+        : {};
+
     return (
         <div className="app-container">
             <h1 className="app-title">Cost Manager</h1>
@@ -35,7 +43,7 @@ const App = () => {
                 setFilteredCosts={setFilteredCosts}
             />
             <ReportTable
-                costs={filteredCosts.length > 0 ? filteredCosts : costs}
+                costs={costs}
                 setCosts={setCosts}
                 setEditingCost={setEditingCost}
                 db={db}
@@ -45,6 +53,7 @@ const App = () => {
                 setFilteredCosts={setFilteredCosts}
                 setCosts={setCosts}
             />
+            <PieChart data={pieChartData} />
         </div>
     );
 };
