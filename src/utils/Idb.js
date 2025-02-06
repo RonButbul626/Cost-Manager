@@ -38,46 +38,30 @@ export class Idb {
     }
 
     /**
-     * Add data to an object store.
+     * Add or update data in an object store.
+     * Automatically adds if `id` is undefined and updates otherwise.
      */
-    async add(storeName, data) {
+    async addOrUpdate(storeName, data) {
         return new Promise((resolve, reject) => {
-            console.log(`Adding data to "${storeName}":`, data);
+            console.log(`Adding or updating data in "${storeName}":`, data);
+
+            if (data.id === undefined) {
+                console.log("Adding new data (no id provided).");
+                delete data.id; // Ensure no `id` is passed for new entries
+            }
+
             const transaction = this.db.transaction(storeName, "readwrite");
             const store = transaction.objectStore(storeName);
 
-            const request = store.add(data);
+            const request = store.put(data); // `put` handles both add and update
 
             request.onsuccess = () => {
-                console.log("Data added successfully with ID:", request.result);
+                console.log("Data added/updated successfully with ID:", request.result);
                 resolve(request.result);
             };
 
             request.onerror = (event) => {
-                console.error("Error adding data:", event.target.error);
-                reject(event.target.error);
-            };
-        });
-    }
-
-    /**
-     * Update or add data in an object store.
-     */
-    async put(storeName, data) {
-        return new Promise((resolve, reject) => {
-            console.log(`Updating item in "${storeName}":`, data);
-            const transaction = this.db.transaction(storeName, "readwrite");
-            const store = transaction.objectStore(storeName);
-
-            const request = store.put(data);
-
-            request.onsuccess = () => {
-                console.log("Item updated successfully.");
-                resolve();
-            };
-
-            request.onerror = (event) => {
-                console.error("Error updating item:", event.target.error);
+                console.error("Error adding/updating data:", event.target.error);
                 reject(event.target.error);
             };
         });

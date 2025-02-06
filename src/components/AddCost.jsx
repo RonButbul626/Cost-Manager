@@ -22,14 +22,14 @@ const AddCost = ({ db, setCosts, editingCost, setEditingCost, filteredCosts, set
             if (newCost.id) {
                 // Update existing cost
                 console.log("Updating cost:", newCost);
-                await db.put("costs", newCost);
+                await db.addOrUpdate("costs", newCost);
                 setCosts((prev) =>
                     prev.map((cost) => (cost.id === newCost.id ? newCost : cost))
                 );
             } else {
                 // Add new cost
                 console.log("Adding new cost:", newCost);
-                const id = await db.add("costs", newCost); // `id` will be automatically handled by IndexedDB
+                const id = await db.addOrUpdate("costs", newCost); // `id` will be automatically handled by IndexedDB
                 setCosts((prev) => [...prev, { ...newCost, id }]);
             }
 
