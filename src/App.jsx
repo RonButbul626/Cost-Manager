@@ -35,6 +35,7 @@ const App = () => {
                     setCosts={setCosts}
                     editingCost={editingCost}
                     setEditingCost={setEditingCost}
+                    isEditing={!!editingCost}
                 />
             </Paper>
 
