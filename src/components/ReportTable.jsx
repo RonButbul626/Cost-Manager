@@ -18,6 +18,12 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
     };
 
     const handleDelete = async () => {
+        if (selectedRows.length === 0) return;
+
+        // 🎯 הצגת הודעת אישור לפני המחיקה
+        const confirmDelete = window.confirm("Are you sure you want to delete?");
+        if (!confirmDelete) return; // אם המשתמש לחץ "לא", אין מחיקה
+
         try {
             const toDelete = selectedRows.map((index) => costs[index]);
 
@@ -36,9 +42,10 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
         if (setEditingCost && selectedRows.length === 1) {
             const selectedCost = costs[selectedRows[0]];
             console.log("Setting cost for editing:", selectedCost);
-            setEditingCost(selectedCost);
+            setEditingCost(selectedCost); // ✅ עכשיו הוא ישלח גם את הנתון ל-AddCost
         }
     };
+
 
     return (
         <TableContainer>

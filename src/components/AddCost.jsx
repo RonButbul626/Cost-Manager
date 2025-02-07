@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Grid, MenuItem, Box } from "@mui/material";
+import { TextField, Button, Grid, MenuItem, Box, Typography } from "@mui/material";
 
-const AddCost = ({ db, setCosts, editingCost, setEditingCost }) => {
+const categories = [
+    "Fruits and vegetables", "Dairy", "Bakery", "Meat and Seafood",
+    "Beverages", "Packaged and Canned Goods", "Frozen Foods",
+    "Snacks and Confectionery", "Personal Care and Household Items",
+    "Health and Wellness", "Baby Products", "Pet Supplies",
+    "Cooking and Baking Essentials", "Alcohol and Tobacco Products",
+    "Ready-to-Eat and Prepared Foods", "Electronics", "Clothing and Footwear", "Others"
+];
+
+const AddCost = ({ db, setCosts, editingCost, setEditingCost, isEditing }) => {
     const [sum, setSum] = useState("");
     const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
@@ -16,14 +25,53 @@ const AddCost = ({ db, setCosts, editingCost, setEditingCost }) => {
         }
     }, [editingCost]);
 
+    const checkIfProductExists = async (newCost) => {
+        const allCosts = await db.getAll("costs");
+
+        // 🎯 אם זה עריכה (`Edit Selected`) אבל השם לא השתנה – לא מבצעים בדיקה
+        if (isEditing && editingCost.description === newCost.description) {
+            return false;
+        }
+
+        // 🔍 בדיקה אם המוצר כבר קיים בכל הקטגוריות
+        const existingProduct = allCosts.find(cost =>
+            cost.description.toLowerCase() === newCost.description.toLowerCase()
+        );
+
+        if (existingProduct) {
+            alert(`The product already exists:\n
+                Name: ${existingProduct.description}\n
+                Category: ${existingProduct.category}\n
+                Price: ${existingProduct.sum}\n
+                Date: ${existingProduct.date}`);
+            return true;
+        }
+        return false;
+    };
+
     const addOrUpdateCosts = async () => {
+        // 🎯 בדיקה שכל השדות מלאים
+        if (!sum || !category || !description || !date) {
+            alert("All fields must be filled!");
+            return;
+        }
+
+        if (sum < 1 || sum > 9999) {
+            alert("The amount must be between 1 and 9999.");
+            return;
+        }
+
         const newCost = { sum, category, description, date, id: editingCost?.id || Date.now() };
 
+        // ✅ רק אם מדובר בהוספת מוצר חדש **או** עריכה שבה השם השתנה - מבצעים בדיקה
+        if ((isEditing || !editingCost) && await checkIfProductExists(newCost)) return;
+
         await db.addOrUpdate("costs", newCost);
-        setCosts((prev) =>
+        setCosts(prev =>
             editingCost ? prev.map(c => (c.id === newCost.id ? newCost : c)) : [...prev, newCost]
         );
 
+        alert("Product added successfully!");
         setEditingCost(null);
         setSum("");
         setCategory("");
@@ -32,31 +80,67 @@ const AddCost = ({ db, setCosts, editingCost, setEditingCost }) => {
     };
 
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <TextField label="Amount" fullWidth value={sum} onChange={(e) => setSum(e.target.value)} />
+        <Box sx={{ maxWidth: 500, margin: "auto", mt: 3 }}>
+            <Typography variant="h6" align="center">
+                {editingCost ? "Edit Expense" : "Add an Expense"}
+            </Typography>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <TextField
+                        label="Amount"
+                        fullWidth
+                        type="number"
+                        value={sum}
+                        onChange={(e) => setSum(e.target.value)}
+                        inputProps={{ min: 1, max: 9999, style: { textAlign: "right" } }}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        select
+                        label="Category"
+                        fullWidth
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        SelectProps={{
+                            MenuProps: {
+                                PaperProps: {
+                                    style: { maxHeight: 250 } // ✅ מגביל את הגובה ל-6 ערכים עם גלילה
+                                },
+                                anchorOrigin: {
+                                    vertical: "bottom",
+                                    horizontal: "left"
+                                },
+                                transformOrigin: {
+                                    vertical: "top",
+                                    horizontal: "left"
+                                }
+                            }
+                        }}
+                    >
+                        {categories.map(cat => (
+                            <MenuItem key={cat} value={cat}>
+                                {cat}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <TextField label="Description" fullWidth value={description} onChange={(e) => setDescription(e.target.value)} />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField type="date" fullWidth value={date} onChange={(e) => setDate(e.target.value)} />
+                </Grid>
+                <Grid item xs={12}>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <Button variant="contained" color="primary" onClick={addOrUpdateCosts}>
+                            {editingCost ? "Update Expense" : "Add Expense"}
+                        </Button>
+                    </Box>
+                </Grid>
             </Grid>
-            <Grid item xs={12}>
-                <TextField select label="Category" fullWidth value={category} onChange={(e) => setCategory(e.target.value)}>
-                    <MenuItem value="Food">Food</MenuItem>
-                    <MenuItem value="Transportation">Transportation</MenuItem>
-                    <MenuItem value="Entertainment">Entertainment</MenuItem>
-                </TextField>
-            </Grid>
-            <Grid item xs={12}>
-                <TextField label="Description" fullWidth value={description} onChange={(e) => setDescription(e.target.value)} />
-            </Grid>
-            <Grid item xs={12}>
-                <TextField type="date" fullWidth value={date} onChange={(e) => setDate(e.target.value)} />
-            </Grid>
-            <Grid item xs={12}>
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" color="primary" onClick={addOrUpdateCosts}>
-                        {editingCost ? "Update Expense" : "Add Expense"}
-                    </Button>
-                </Box>
-            </Grid>
-        </Grid>
+        </Box>
     );
 };
 
