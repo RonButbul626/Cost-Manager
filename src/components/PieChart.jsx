@@ -1,22 +1,22 @@
 import React, { useRef, useEffect, useMemo } from "react";
 import Chart from "chart.js/auto";
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 
 const PieChart = ({ costs }) => {
     const canvasRef = useRef();
     const chartInstanceRef = useRef(null);
 
-    // Use useMemo to compute data only when costs change
+    // 🎯 חישוב הנתונים רק כאשר `costs` משתנה
     const data = useMemo(() => {
         if (!costs?.length) return null;
         return costs.reduce((acc, cost) => {
             acc[cost.category] = (acc[cost.category] || 0) + Number(cost.sum);
             return acc;
         }, {});
-    }, [costs]); // useMemo ensures data is recomputed only when costs change
+    }, [costs]);
 
     useEffect(() => {
-        if (!data) return; // Prevent rendering when data is null
+        if (!data) return; // מניעת רינדור כאשר אין נתונים
 
         const ctx = canvasRef.current.getContext("2d");
 
@@ -42,25 +42,23 @@ const PieChart = ({ costs }) => {
                 chartInstanceRef.current.destroy();
             }
         };
-    }, [data]); // ✅ Now includes 'data' in the dependency array
+    }, [data]);
 
     return (
-        <Card sx={{ maxWidth: 500, margin: "auto", mt: 3 }}>
-            <CardContent>
-                <Typography variant="h6" align="center">
-                    Expense Breakdown
+        <Box sx={{ maxWidth: 500, margin: "auto", mt: 3, textAlign: "center" }}>
+            <Typography variant="h6">
+                Expense Breakdown
+            </Typography>
+            {data ? (
+                <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                    <canvas ref={canvasRef}></canvas>
+                </Box>
+            ) : (
+                <Typography sx={{ mt: 2, color: "gray" }}>
+                    No data available
                 </Typography>
-                {data ? (
-                    <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                        <canvas ref={canvasRef}></canvas>
-                    </Box>
-                ) : (
-                    <Typography align="center" sx={{ mt: 2, color: "gray" }}>
-                        No data available
-                    </Typography>
-                )}
-            </CardContent>
-        </Card>
+            )}
+        </Box>
     );
 };
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Checkbox, Button, Box, Tooltip } from "@mui/material";
-import "./ReportTable.css"; // ✅ הוספנו CSS מותאם אישית
+import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Checkbox, Box, Button } from "@mui/material";
+import "./ReportTable.css";
 
 const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
     const [selectedRows, setSelectedRows] = useState([]);
@@ -41,7 +41,7 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
     };
 
     return (
-        <TableContainer component={Paper} sx={{ mt: 3 }}>
+        <TableContainer>
             <Table>
                 <TableHead>
                     <TableRow>
@@ -77,31 +77,23 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
             </Table>
 
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2, gap: 2 }}>
-                {/* כפתור Delete Selected - ראשון משמאל */}
                 <Button
                     variant="contained"
                     color="error"
                     onClick={handleDelete}
                     disabled={selectedRows.length === 0}
-                    className={selectedRows.length === 0 ? "disabled-button" : ""}
                 >
                     Delete Selected
                 </Button>
 
-                {/* כפתור Edit Selected - שני, בצד ימין */}
-                <Tooltip title={selectedRows.length === 1 ? "" : "Select exactly one row to edit"}>
-                    <span>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleEdit}
-                            disabled={selectedRows.length !== 1}
-                            className={selectedRows.length !== 1 ? "disabled-button" : ""}
-                        >
-                            Edit Selected
-                        </Button>
-                    </span>
-                </Tooltip>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleEdit}
+                    disabled={selectedRows.length !== 1}
+                >
+                    Edit Selected
+                </Button>
             </Box>
         </TableContainer>
     );

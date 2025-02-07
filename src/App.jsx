@@ -4,12 +4,12 @@ import ReportTable from "./components/ReportTable";
 import ReportGenerator from "./components/ReportGenerator";
 import PieChart from "./components/PieChart";
 import { Idb } from "./utils/Idb";
-import { Container, Typography, Box, Paper } from "@mui/material";
+import { Container, Typography, Paper } from "@mui/material";
 
 const db = new Idb("ExpenseDB", 1);
 
 const App = () => {
-    const [costs, setCosts] = useState([]); // All costs
+    const [costs, setCosts] = useState([]);
     const [editingCost, setEditingCost] = useState(null);
     const [filteredCosts, setFilteredCosts] = useState([]);
 
@@ -28,42 +28,35 @@ const App = () => {
                 Cost Manager
             </Typography>
 
-            <Box sx={{ mb: 3 }}>
-                <Paper sx={{ p: 3 }}>
-                    <AddCost
-                        db={db}
-                        setCosts={setCosts}
-                        editingCost={editingCost}
-                        setEditingCost={setEditingCost}
-                    />
-                </Paper>
-            </Box>
+            {/* 📌 הוספנו רק Paper, בלי Box מסביב */}
+            <Paper sx={{ p: 3, mb: 3 }}>
+                <AddCost
+                    db={db}
+                    setCosts={setCosts}
+                    editingCost={editingCost}
+                    setEditingCost={setEditingCost}
+                />
+            </Paper>
 
-            <Box sx={{ mb: 3 }}>
-                <Paper sx={{ p: 3 }}>
-                    <ReportGenerator
-                        db={db}
-                        setFilteredCosts={setFilteredCosts}
-                    />
-                </Paper>
-            </Box>
+            <Paper sx={{ p: 3, mb: 3 }}>
+                <ReportGenerator
+                    db={db}
+                    setFilteredCosts={setFilteredCosts}
+                />
+            </Paper>
 
-            <Box sx={{ mb: 3 }}>
-                <Paper sx={{ p: 3 }}>
-                    <ReportTable
-                        costs={filteredCosts.length > 0 ? filteredCosts : costs}
-                        setCosts={setCosts}
-                        setEditingCost={setEditingCost} // ✅ עכשיו זה עובר כ-prop!
-                        db={db}
-                    />
-                </Paper>
-            </Box>
+            <Paper sx={{ p: 3, mb: 3 }}>
+                <ReportTable
+                    costs={filteredCosts.length > 0 ? filteredCosts : costs}
+                    setCosts={setCosts}
+                    setEditingCost={setEditingCost}
+                    db={db}
+                />
+            </Paper>
 
-            <Box sx={{ mb: 3 }}>
-                <Paper sx={{ p: 3 }}>
-                    <PieChart costs={filteredCosts.length > 0 ? filteredCosts : costs} />
-                </Paper>
-            </Box>
+            <Paper sx={{ p: 3, mb: 3 }}>
+                <PieChart costs={filteredCosts.length > 0 ? filteredCosts : costs} />
+            </Paper>
         </Container>
     );
 };
