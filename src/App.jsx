@@ -50,7 +50,12 @@ const App = () => {
 
             <Box sx={{ mb: 3 }}>
                 <Paper sx={{ p: 3 }}>
-                    <ReportTable costs={filteredCosts.length > 0 ? filteredCosts : costs} />
+                    <ReportTable
+                        costs={filteredCosts.length > 0 ? filteredCosts : costs}
+                        setCosts={setCosts}
+                        setEditingCost={setEditingCost} // ✅ עכשיו זה עובר כ-prop!
+                        db={db}
+                    />
                 </Paper>
             </Box>
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Checkbox, Button, Box } from "@mui/material";
+import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Checkbox, Button, Box, Tooltip } from "@mui/material";
+import "./ReportTable.css"; // ✅ הוספנו CSS מותאם אישית
 
 const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
     const [selectedRows, setSelectedRows] = useState([]);
@@ -31,6 +32,14 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
         }
     };
 
+    const handleEdit = () => {
+        if (setEditingCost && selectedRows.length === 1) {
+            const selectedCost = costs[selectedRows[0]];
+            console.log("Setting cost for editing:", selectedCost);
+            setEditingCost(selectedCost);
+        }
+    };
+
     return (
         <TableContainer component={Paper} sx={{ mt: 3 }}>
             <Table>
@@ -47,7 +56,6 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
                         <TableCell>Category</TableCell>
                         <TableCell>Description</TableCell>
                         <TableCell>Date</TableCell>
-                        <TableCell>Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -63,22 +71,38 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
                             <TableCell>{cost.category}</TableCell>
                             <TableCell>{cost.description}</TableCell>
                             <TableCell>{cost.date}</TableCell>
-                            <TableCell>
-                                <Button variant="contained" color="primary" size="small" onClick={() => setEditingCost(cost)}>
-                                    Edit
-                                </Button>
-                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
-            {selectedRows.length > 0 && (
-                <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                    <Button variant="contained" color="error" onClick={handleDelete}>
-                        Delete Selected
-                    </Button>
-                </Box>
-            )}
+
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 2, gap: 2 }}>
+                {/* כפתור Delete Selected - ראשון משמאל */}
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleDelete}
+                    disabled={selectedRows.length === 0}
+                    className={selectedRows.length === 0 ? "disabled-button" : ""}
+                >
+                    Delete Selected
+                </Button>
+
+                {/* כפתור Edit Selected - שני, בצד ימין */}
+                <Tooltip title={selectedRows.length === 1 ? "" : "Select exactly one row to edit"}>
+                    <span>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleEdit}
+                            disabled={selectedRows.length !== 1}
+                            className={selectedRows.length !== 1 ? "disabled-button" : ""}
+                        >
+                            Edit Selected
+                        </Button>
+                    </span>
+                </Tooltip>
+            </Box>
         </TableContainer>
     );
 };
