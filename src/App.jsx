@@ -4,7 +4,7 @@ import ReportTable from "./components/ReportTable";
 import ReportGenerator from "./components/ReportGenerator";
 import PieChart from "./components/PieChart";
 import { Idb } from "./utils/Idb";
-import { Container, Typography, Paper } from "@mui/material";
+import { Container, Typography, Box, Paper } from "@mui/material";
 
 const db = new Idb("ExpenseDB", 1);
 
@@ -23,41 +23,58 @@ const App = () => {
     }, []);
 
     return (
-        <Container maxWidth="md">
-            <Typography variant="h4" component="h1" align="center" gutterBottom>
-                Cost Manager
-            </Typography>
+        <Container maxWidth="xl" sx={{ padding: 2, overflowX: "hidden" }}>
 
-            {/* 📌 הוספנו רק Paper, בלי Box מסביב */}
-            <Paper sx={{ p: 3, mb: 3 }}>
-                <AddCost
-                    db={db}
-                    setCosts={setCosts}
-                    editingCost={editingCost}
-                    setEditingCost={setEditingCost}
-                    isEditing={!!editingCost}
-                />
-            </Paper>
+            {/* 🟦 כותרת ראשית - מוצמד לחלק העליון */}
+            <Box
+                sx={{
+                    backgroundColor: "#1976d2",
+                    color: "white",
+                    textAlign: "left",
+                    padding: "16px 0",
+                    paddingLeft: "20px",
+                    borderRadius: "0",
+                    boxShadow: 3,
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    zIndex: 1000,
+                }}
+            >
+                <Typography variant="h4">Cost Manager</Typography>
+            </Box>
 
-            <Paper sx={{ p: 3, mb: 3 }}>
-                <ReportGenerator
-                    db={db}
-                    setFilteredCosts={setFilteredCosts}
-                />
-            </Paper>
+            <Box
+                sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 3fr", // ✅ הרחבנו את ReportTable כך שיתאים ל-PieChart
+                    gridTemplateRows: "auto auto",
+                    gap: 2,
+                    alignItems: "stretch",
+                    mt: 10, // ✅ משאיר רווח מתחת לכותרת הקבועה
+                }}
+            >
+                {/* 🟩 AddCost בצד שמאל קטן יותר */}
+                <Paper sx={{ p: 2, boxShadow: 3, maxWidth: "90%" }}>
+                    <AddCost db={db} setCosts={setCosts} editingCost={editingCost} setEditingCost={setEditingCost} />
+                </Paper>
 
-            <Paper sx={{ p: 3, mb: 3 }}>
-                <ReportTable
-                    costs={filteredCosts.length > 0 ? filteredCosts : costs}
-                    setCosts={setCosts}
-                    setEditingCost={setEditingCost}
-                    db={db}
-                />
-            </Paper>
+                {/* 🟦 ReportTable רחב יותר - שווה בגודל ל-PieChart */}
+                <Paper sx={{ p: 2, boxShadow: 3, maxHeight: 500, overflowY: "auto", width: "100%" }}>
+                    <ReportTable costs={filteredCosts.length > 0 ? filteredCosts : costs} setCosts={setCosts} setEditingCost={setEditingCost} db={db} />
+                </Paper>
 
-            <Paper sx={{ p: 3, mb: 3 }}>
-                <PieChart costs={filteredCosts.length > 0 ? filteredCosts : costs} />
-            </Paper>
+                {/* 🟨 GenerateReport - ממורכז לשמאל */}
+                <Paper sx={{ p: 2, boxShadow: 3, maxWidth: "90%" }}>
+                    <ReportGenerator db={db} setFilteredCosts={setFilteredCosts} />
+                </Paper>
+
+                {/* 🔵 PieChart רחב יותר - כעת זהה לרוחב של ReportTable */}
+                <Paper sx={{ p: 2, boxShadow: 3, width: "100%", maxHeight: 500 }}>
+                    <PieChart costs={filteredCosts.length > 0 ? filteredCosts : costs} />
+                </Paper>
+            </Box>
         </Container>
     );
 };

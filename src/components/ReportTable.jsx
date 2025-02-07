@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Checkbox, Box, Button } from "@mui/material";
+import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Checkbox, Box, Button, Paper } from "@mui/material";
 import "./ReportTable.css";
 
 const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
@@ -18,12 +18,6 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
     };
 
     const handleDelete = async () => {
-        if (selectedRows.length === 0) return;
-
-        // 🎯 הצגת הודעת אישור לפני המחיקה
-        const confirmDelete = window.confirm("Are you sure you want to delete?");
-        if (!confirmDelete) return; // אם המשתמש לחץ "לא", אין מחיקה
-
         try {
             const toDelete = selectedRows.map((index) => costs[index]);
 
@@ -42,14 +36,13 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
         if (setEditingCost && selectedRows.length === 1) {
             const selectedCost = costs[selectedRows[0]];
             console.log("Setting cost for editing:", selectedCost);
-            setEditingCost(selectedCost); // ✅ עכשיו הוא ישלח גם את הנתון ל-AddCost
+            setEditingCost(selectedCost);
         }
     };
 
-
     return (
-        <TableContainer>
-            <Table>
+        <TableContainer component={Paper} sx={{ maxHeight: 500, overflowY: "auto", width: "100%" }}>
+            <Table stickyHeader>
                 <TableHead>
                     <TableRow>
                         <TableCell padding="checkbox">
@@ -59,10 +52,11 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
                                 onChange={toggleSelectAll}
                             />
                         </TableCell>
-                        <TableCell>Amount</TableCell>
-                        <TableCell>Category</TableCell>
-                        <TableCell>Description</TableCell>
-                        <TableCell>Date</TableCell>
+                        {/* ✅ קביעת רוחב מינימלי רק לעמודות המחיר והתאריך */}
+                        <TableCell sx={{ width: "80px", textAlign: "center" }}>Amount</TableCell>
+                        <TableCell sx={{ width: "25%", textAlign: "left" }}>Category</TableCell>
+                        <TableCell sx={{ textAlign: "left" }}>Description</TableCell>
+                        <TableCell sx={{ width: "120px", textAlign: "center" }}>Date</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -74,31 +68,22 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
                                     onChange={() => toggleRowSelection(index)}
                                 />
                             </TableCell>
-                            <TableCell>{cost.sum}</TableCell>
-                            <TableCell>{cost.category}</TableCell>
-                            <TableCell>{cost.description}</TableCell>
-                            <TableCell>{cost.date}</TableCell>
+                            {/* ✅ יישור נתונים ויישום הגדרות רוחב */}
+                            <TableCell sx={{ width: "80px", textAlign: "center" }}>{cost.sum}</TableCell>
+                            <TableCell sx={{ width: "25%", textAlign: "left" }}>{cost.category}</TableCell>
+                            <TableCell sx={{ textAlign: "left" }}>{cost.description}</TableCell>
+                            <TableCell sx={{ width: "120px", textAlign: "center" }}>{cost.date}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
 
+            {/* 🟦 כפתורי מחיקה ועריכה */}
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2, gap: 2 }}>
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleDelete}
-                    disabled={selectedRows.length === 0}
-                >
+                <Button variant="contained" color="error" onClick={handleDelete} disabled={selectedRows.length === 0}>
                     Delete Selected
                 </Button>
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleEdit}
-                    disabled={selectedRows.length !== 1}
-                >
+                <Button variant="contained" color="primary" onClick={handleEdit} disabled={selectedRows.length !== 1}>
                     Edit Selected
                 </Button>
             </Box>
