@@ -5,12 +5,11 @@
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     background-color: #ffffff;
     height: 100%;
 }
 
-/* 🎯 עיצוב הטבלה */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -18,7 +17,7 @@ table {
     font-size: 18px;
     text-align: left;
     border: 1px solid #ddd;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
     border-radius: 8px;
     overflow: hidden;
@@ -48,12 +47,10 @@ tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-/* 🎯 שורה נבחרת */
 .selected-row td {
     background-color: #ffe4e1;
 }
 
-/* 🎯 עיצוב כשאין נתונים */
 .no-data {
     text-align: center;
     font-size: 18px;
@@ -72,7 +69,7 @@ button {
     transition: background-color 0.3s ease;
 }
 
-/* 🗑️ כפתור מחיקה */
+/* 🔥 כפתור מחיקה */
 .delete-button {
     background-color: #dc3545;
     color: white;
@@ -82,11 +79,9 @@ button {
     background-color: #c82333;
 }
 
-/* 🔥 כפתור מחיקה כבוי */
 .delete-button:disabled {
     background-color: #ddd;
     cursor: not-allowed;
-    opacity: 0.6;
 }
 
 /* ✏️ כפתור עריכה */
@@ -103,7 +98,6 @@ button {
 .edit-button:disabled {
     background-color: #ddd;
     cursor: not-allowed;
-    opacity: 0.6;
 }
 
 /* 🎯 ווידוא שהסמן יישאר אסור גם בלי hover */
@@ -111,7 +105,7 @@ button {
     cursor: not-allowed;
 }
 
-/* 🎯 סידור הכפתורים (מחיקה שמאל, עריכה ימין) */
+/* 🎯 סידור הכפתורים */
 .button-container {
     display: flex;
     justify-content: center;
