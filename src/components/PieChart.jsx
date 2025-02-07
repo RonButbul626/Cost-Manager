@@ -1,17 +1,29 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 import Chart from "chart.js/auto";
-import "./PieChart.css";
+import { Card, CardContent, Typography, Box } from "@mui/material";
 
-const PieChart = ({ data }) => {
+const PieChart = ({ costs }) => {
     const canvasRef = useRef();
     const chartInstanceRef = useRef(null);
 
+    // Use useMemo to compute data only when costs change
+    const data = useMemo(() => {
+        if (!costs?.length) return null;
+        return costs.reduce((acc, cost) => {
+            acc[cost.category] = (acc[cost.category] || 0) + Number(cost.sum);
+            return acc;
+        }, {});
+    }, [costs]); // useMemo ensures data is recomputed only when costs change
+
     useEffect(() => {
+        if (!data) return; // Prevent rendering when data is null
+
         const ctx = canvasRef.current.getContext("2d");
 
         if (chartInstanceRef.current) {
             chartInstanceRef.current.destroy();
         }
+
         chartInstanceRef.current = new Chart(ctx, {
             type: "pie",
             data: {
@@ -25,18 +37,30 @@ const PieChart = ({ data }) => {
             },
         });
 
-        // Cleanup on component unmount
         return () => {
             if (chartInstanceRef.current) {
                 chartInstanceRef.current.destroy();
             }
         };
-    }, [data]);
+    }, [data]); // ✅ Now includes 'data' in the dependency array
 
     return (
-        <div className="pie-chart-container">
-            <canvas ref={canvasRef}></canvas>
-        </div>
+        <Card sx={{ maxWidth: 500, margin: "auto", mt: 3 }}>
+            <CardContent>
+                <Typography variant="h6" align="center">
+                    Expense Breakdown
+                </Typography>
+                {data ? (
+                    <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                        <canvas ref={canvasRef}></canvas>
+                    </Box>
+                ) : (
+                    <Typography align="center" sx={{ mt: 2, color: "gray" }}>
+                        No data available
+                    </Typography>
+                )}
+            </CardContent>
+        </Card>
     );
 };
 

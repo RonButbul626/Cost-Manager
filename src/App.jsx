@@ -4,7 +4,7 @@ import ReportTable from "./components/ReportTable";
 import ReportGenerator from "./components/ReportGenerator";
 import PieChart from "./components/PieChart";
 import { Idb } from "./utils/Idb";
-import "./App.css";
+import { Container, Typography, Box, Paper } from "@mui/material";
 
 const db = new Idb("ExpenseDB", 1);
 
@@ -15,46 +15,51 @@ const App = () => {
 
     useEffect(() => {
         const initDB = async () => {
-            console.log("Initializing DB in App...");
             await db.init([{ name: "costs", options: { keyPath: "id", autoIncrement: true } }]);
             const existingCosts = await db.getAll("costs");
             setCosts(existingCosts);
-            console.log("Loaded costs:", existingCosts);
         };
         initDB();
     }, []);
 
-    const pieChartData = filteredCosts.length > 0
-        ? filteredCosts.reduce((acc, cost) => {
-              acc[cost.category] = (acc[cost.category] || 0) + 1;
-              return acc;
-          }, {})
-        : {};
-
     return (
-        <div className="app-container">
-            <h1 className="app-title">Cost Manager</h1>
-            <AddCost
-                db={db}
-                setCosts={setCosts}
-                editingCost={editingCost}
-                setEditingCost={setEditingCost}
-                filteredCosts={filteredCosts}
-                setFilteredCosts={setFilteredCosts}
-            />
-            <ReportTable
-                costs={costs}
-                setCosts={setCosts}
-                setEditingCost={setEditingCost}
-                db={db}
-            />
-            <ReportGenerator
-                db={db}
-                setFilteredCosts={setFilteredCosts}
-                setCosts={setCosts}
-            />
-            <PieChart data={pieChartData} />
-        </div>
+        <Container maxWidth="md">
+            <Typography variant="h4" component="h1" align="center" gutterBottom>
+                Cost Manager
+            </Typography>
+
+            <Box sx={{ mb: 3 }}>
+                <Paper sx={{ p: 3 }}>
+                    <AddCost
+                        db={db}
+                        setCosts={setCosts}
+                        editingCost={editingCost}
+                        setEditingCost={setEditingCost}
+                    />
+                </Paper>
+            </Box>
+
+            <Box sx={{ mb: 3 }}>
+                <Paper sx={{ p: 3 }}>
+                    <ReportGenerator
+                        db={db}
+                        setFilteredCosts={setFilteredCosts}
+                    />
+                </Paper>
+            </Box>
+
+            <Box sx={{ mb: 3 }}>
+                <Paper sx={{ p: 3 }}>
+                    <ReportTable costs={filteredCosts.length > 0 ? filteredCosts : costs} />
+                </Paper>
+            </Box>
+
+            <Box sx={{ mb: 3 }}>
+                <Paper sx={{ p: 3 }}>
+                    <PieChart costs={filteredCosts.length > 0 ? filteredCosts : costs} />
+                </Paper>
+            </Box>
+        </Container>
     );
 };
 
