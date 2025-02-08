@@ -5,9 +5,6 @@ class VanillaIDB {
         this.db = null;
     }
 
-    /**
-     * Initializes the IndexedDB and creates object stores if needed.
-     */
     async init(objectStores) {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(this.dbName, this.version);
@@ -32,9 +29,6 @@ class VanillaIDB {
         });
     }
 
-    /**
-     * Adds a new entry to the object store.
-     */
     async add(storeName, data) {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction(storeName, "readwrite");
@@ -46,9 +40,7 @@ class VanillaIDB {
         });
     }
 
-    /**
-     * Updates an existing entry or adds it if it does not exist.
-     */
+
     async put(storeName, data) {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction(storeName, "readwrite");
@@ -60,9 +52,6 @@ class VanillaIDB {
         });
     }
 
-    /**
-     * Retrieves all entries from the object store.
-     */
     async getAll(storeName) {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction(storeName, "readonly");
@@ -74,9 +63,6 @@ class VanillaIDB {
         });
     }
 
-    /**
-     * Deletes an entry by ID from the object store.
-     */
     async delete(storeName, id) {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction(storeName, "readwrite");

@@ -14,9 +14,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     let currentFilteredMonth = null; // Track the currently filtered month
     let currentFilteredYear = null; // Track the currently filtered year
 
-    /**
-     * Renders the full costs table.
-     */
     const renderCosts = async () => {
         const costs = await db.getAll("costs");
         costsTable.innerHTML = "";
@@ -37,9 +34,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     };
 
-    /**
-     * Renders the filtered costs table and updates the pie chart.
-     */
     const renderFilteredCosts = async () => {
         const costs = await db.getAll("costs");
         const filteredCosts = costs.filter((cost) => {
@@ -68,17 +62,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         updatePieChart(filteredCosts);
     };
 
-    /**
-     * Updates the pie chart based on the number of entries in each category.
-     */
+
     const updatePieChart = (filteredCosts) => {
         const chartData = filteredCosts.reduce((acc, cost) => {
-            acc[cost.category] = (acc[cost.category] || 0) + 1; // Count number of entries per category
+            acc[cost.category] = (acc[cost.category] || 0) + 1;
             return acc;
         }, {});
 
         if (chartInstance) {
-            chartInstance.destroy(); // Destroy existing chart before creating a new one
+            chartInstance.destroy();
         }
 
         chartInstance = new Chart(pieChartCanvas.getContext("2d"), {
@@ -95,18 +87,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     };
 
-    /**
-     * Deletes a cost and updates the tables and chart.
-     */
     window.deleteCost = async (id) => {
         await db.delete("costs", id);
         renderCosts();
-        renderFilteredCosts(); // Also update filtered costs if applicable
+        renderFilteredCosts();
     };
 
-    /**
-     * Populates the form fields for editing a cost.
-     */
+
     window.editCost = async (id) => {
         const cost = (await db.getAll("costs")).find((item) => item.id === id);
         if (cost) {
@@ -118,9 +105,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 
-    /**
-     * Handles form submission for adding or updating a cost.
-     */
     addForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const sum = document.getElementById("sum").value;
@@ -129,22 +113,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         const date = document.getElementById("date").value;
 
         if (editingCostId) {
-            // Update existing cost
             await db.put("costs", { id: editingCostId, sum: parseFloat(sum), category, description, date });
             editingCostId = null; // Reset editing mode
         } else {
-            // Add new cost
             await db.add("costs", { sum: parseFloat(sum), category, description, date });
         }
 
         addForm.reset();
         await renderCosts();
-        await renderFilteredCosts(); // Update filtered costs after addition
-    });
+        await renderFilteredCosts();
+         });
 
-    /**
-     * Handles filtering costs by month and year.
-     */
     filterForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         currentFilteredMonth = document.getElementById("filter-month").value;
@@ -152,7 +131,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         await renderFilteredCosts();
     });
-
-    // Initial rendering of all costs
     renderCosts();
 });
