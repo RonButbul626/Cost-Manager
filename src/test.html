@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanilla IndexedDB Testing</title>
+    <script src="VanillaIDB.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="test.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>IndexedDB Test</h1>
+
+<div>
+    <form id="add-cost-form">
+        <label for="sum">Sum:</label>
+        <input type="number" id="sum" required>
+        <label for="category">Category:</label>
+        <input type="text" id="category" required>
+        <label for="description">Description:</label>
+        <input type="text" id="description">
+        <label for="date">Date:</label>
+        <input type="date" id="date" required>
+        <button type="submit">Add Cost</button>
+    </form>
+</div>
+
+<div>
+    <h2>Costs</h2>
+    <table id="costs-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Sum</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div>
+    <h2>Filtered Costs</h2>
+    <form id="filter-form">
+        <label for="filter-month">Month:</label>
+        <select id="filter-month">
+            <option value="">Select Month</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+        </select>
+        <label for="filter-year">Year:</label>
+        <input type="number" id="filter-year" placeholder="Enter Year">
+        <button type="submit">Generate Report</button>
+    </form>
+    <table id="filtered-costs-table">
+        <thead>
+        <tr>
+            <th>Sum</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div>
+    <h2>Pie Chart</h2>
+    <canvas id="pie-chart"></canvas>
+</div>
+</body>
+</html>
