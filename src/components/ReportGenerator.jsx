@@ -21,12 +21,13 @@ const ReportGenerator = ({ db, setReportData }) => {
                 (!year || costDate.getFullYear() === parseInt(year))
             );
         });
-        setReportData(filtered);
+
+        setReportData(filtered); // ✅ שולח את הדוח לתצוגה בריבוע הקבוע למטה
     };
 
     return (
-        <Box sx={{ textAlign: "center", maxWidth: 500, margin: "auto" }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>Select Month and Year for Report</Typography>
+        <Box sx={{ textAlign: "center", maxWidth: 500, margin: "auto", mt: 2 }}>
+            <Typography variant="h6" sx={{ mb: 3 }}>Select Month and Year for Report</Typography>
             <Grid container spacing={2}>
                 <Grid item xs={6}>
                     <TextField
@@ -69,7 +70,7 @@ const ReportGenerator = ({ db, setReportData }) => {
                     </TextField>
                 </Grid>
             </Grid>
-            <Button variant="contained" color="primary" onClick={generateReport} sx={{ mt: 2 }}>
+            <Button variant="contained" color="primary" onClick={generateReport} sx={{ mt: 3 }}>
                 Generate Report
             </Button>
         </Box>
