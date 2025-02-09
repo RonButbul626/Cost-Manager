@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import {TextField, Button, MenuItem, Box, Typography, Grid2, Select} from "@mui/material";
+import { MenuItem, Box, Typography, Grid2, Select, FormControl, InputLabel, Button } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-//import Grid from '@mui/material/Unstable_Grid2';
 
 const months = [
     "Select Month", "January", "February", "March", "April", "May", "June",
@@ -39,8 +38,6 @@ const ReportGenerator = ({ db, setReportData, setReportTitle }) => {
         components: {
             MuiGrid2: {
                 defaultProps: {
-                    // all grids under this theme will apply
-                    // negative margin on the top and left sides.
                     disableEqualOverflow: true,
                 },
             },
@@ -52,45 +49,45 @@ const ReportGenerator = ({ db, setReportData, setReportTitle }) => {
             <Typography variant="h6" sx={{ mb: 3 }}>Select Month and Year for Report</Typography>
             <ThemeProvider theme={theme}>
                 <Grid2 container spacing={2}>
-                    <Grid2 xs={6}> {/* ✅ אין צורך ב-item */}
-                        <TextField
-                            select
-                            label="Month"
-                            value={month}
-                            onChange={(e) => setMonth(e.target.value)}
-                            fullWidth
-                            SelectProps={{
-                                MenuProps: {
-                                    PaperProps: {
-                                        style: { maxHeight: 200 }
-                                    }
-                                }
-                            }}
-                        >
-                            {months.map((m, index) => (
-                                <MenuItem key={index} value={m}>{m}</MenuItem>
-                            ))}
-                        </TextField>
+                    <Grid2 xs={6}>
+                        <FormControl fullWidth>
+                            <InputLabel>Month</InputLabel>
+                            <Select
+                                value={month}
+                                onChange={(e) => setMonth(e.target.value)}
+                                label="Month"
+                                variant="outlined"
+                                MenuProps={{
+                                    PaperProps: { style: { maxHeight: 200 } },
+                                    anchorOrigin: { vertical: "bottom", horizontal: "left" },
+                                    transformOrigin: { vertical: "top", horizontal: "left" },
+                                }}
+                            >
+                                {months.map((m, index) => (
+                                    <MenuItem key={index} value={m}>{m}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid2>
-                    <Grid2 xs={6}> {/* ✅ אין צורך ב-item */}
-                        <TextField
-                            select
-                            label="Year"
-                            value={year}
-                            onChange={(e) => setYear(e.target.value)}
-                            fullWidth
-                            SelectProps={{
-                                MenuProps: {
-                                    PaperProps: {
-                                        style: { maxHeight: 200 }
-                                    }
-                                }
-                            }}
-                        >
-                            {years.map((y, index) => (
-                                <MenuItem key={index} value={y}>{y}</MenuItem>
-                            ))}
-                        </TextField>
+                    <Grid2 xs={6}>
+                        <FormControl fullWidth>
+                            <InputLabel>Year</InputLabel>
+                            <Select
+                                value={year}
+                                onChange={(e) => setYear(e.target.value)}
+                                label="Year"
+                                variant="outlined"
+                                MenuProps={{
+                                    PaperProps: { style: { maxHeight: 200 } },
+                                    anchorOrigin: { vertical: "bottom", horizontal: "left" },
+                                    transformOrigin: { vertical: "top", horizontal: "left" },
+                                }}
+                            >
+                                {years.map((y, index) => (
+                                    <MenuItem key={index} value={y}>{y}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid2>
                 </Grid2>
             </ThemeProvider>
