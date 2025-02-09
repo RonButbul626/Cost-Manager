@@ -8,7 +8,7 @@ const months = [
 
 const years = Array.from({ length: 26 }, (_, i) => 2000 + i);
 
-const ReportGenerator = ({ db, setReportData }) => {
+const ReportGenerator = ({ db, setReportData, setReportTitle }) => {
     const [month, setMonth] = useState("");
     const [year, setYear] = useState("");
 
@@ -22,11 +22,15 @@ const ReportGenerator = ({ db, setReportData }) => {
             );
         });
 
-        setReportData(filtered); // ✅ שולח את הדוח לתצוגה בריבוע הקבוע למטה
+        // ✅ ממיין לפי קטגוריות לפני הצגה
+        const sortedData = filtered.sort((a, b) => a.category.localeCompare(b.category));
+
+        setReportData(sortedData);
+        setReportTitle(`Filtered Report - ${month} ${year}`); // ✅ מעדכן את כותרת הדוח
     };
 
     return (
-        <Box sx={{ textAlign: "center", maxWidth: 500, margin: "auto", mt: 2 }}>
+        <Box sx={{ textAlign: "center", maxWidth: 500, margin: "auto" }}>
             <Typography variant="h6" sx={{ mb: 3 }}>Select Month and Year for Report</Typography>
             <Grid container spacing={2}>
                 <Grid item xs={6}>
@@ -39,7 +43,7 @@ const ReportGenerator = ({ db, setReportData }) => {
                         SelectProps={{
                             MenuProps: {
                                 PaperProps: {
-                                    style: { maxHeight: 200 } // מציג 6 ערכים עם גלילה
+                                    style: { maxHeight: 200 }
                                 }
                             }
                         }}

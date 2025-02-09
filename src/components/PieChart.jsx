@@ -13,11 +13,11 @@ const PieChart = ({ costs }) => {
     const canvasRef = useRef();
     const chartInstanceRef = useRef(null);
 
-    // 🎯 חישוב הנתונים רק כאשר `costs` משתנה
+    // 🎯 שינוי לוגיקה: עכשיו מחשב **מספר מוצרים בכל קטגוריה** במקום סכום
     const data = useMemo(() => {
         if (!costs?.length) return null;
         return costs.reduce((acc, cost) => {
-            acc[cost.category] = (acc[cost.category] || 0) + Number(cost.sum);
+            acc[cost.category] = (acc[cost.category] || 0) + 1; // ✅ סופרים את מספר הפריטים ולא מחברים סכום
             return acc;
         }, {});
     }, [costs]);
@@ -44,7 +44,7 @@ const PieChart = ({ costs }) => {
             },
             options: {
                 plugins: {
-                    legend: { display: false } // ✅ הסרת המקרא הדיפולטי של Chart.js
+                    legend: { display: false } // ✅ השארנו את המקרא כפי שהיה
                 }
             }
         });

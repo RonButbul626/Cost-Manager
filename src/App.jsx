@@ -11,7 +11,8 @@ const db = new Idb("ExpenseDB", 1);
 const App = () => {
     const [costs, setCosts] = useState([]);
     const [editingCost, setEditingCost] = useState(null);
-    const [reportData, setReportData] = useState(null); // ✅ ניהול הדוח הספציפי
+    const [reportData, setReportData] = useState(null);
+    const [reportTitle, setReportTitle] = useState("Filtered Report"); // ✅ כותרת דינמית לדוח
 
     useEffect(() => {
         const initDB = async () => {
@@ -25,7 +26,6 @@ const App = () => {
     return (
         <Container maxWidth="xl" sx={{ padding: 2, overflowX: "hidden" }}>
 
-            {/* 🟦 כותרת ראשית */}
             <Box
                 sx={{
                     backgroundColor: "#1976d2",
@@ -45,50 +45,24 @@ const App = () => {
                 <Typography variant="h4">Cost Manager</Typography>
             </Box>
 
-            {/* 📌 הגריד הראשי לכל הקומפוננטות */}
-            <Box
-                sx={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 3fr",
-                    gridTemplateRows: "auto auto",
-                    gap: 4, // ✅ המרווח בין כל הקומפוננטות
-                    alignItems: "stretch",
-                    mt: 14,
-                }}
-            >
-                {/* 🟩 AddCost */}
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 3fr", gridTemplateRows: "auto auto", gap: 4, alignItems: "stretch", mt: 14 }}>
                 <Paper sx={{ p: 3, boxShadow: 3, maxWidth: "90%" }}>
                     <AddCost db={db} setCosts={setCosts} editingCost={editingCost} setEditingCost={setEditingCost} />
                 </Paper>
-
-                {/* 🟦 ReportTable - קבוע ולא משתנה */}
                 <Paper sx={{ p: 3, boxShadow: 3, maxHeight: 500, overflowY: "auto", width: "100%" }}>
                     <ReportTable costs={costs} setCosts={setCosts} setEditingCost={setEditingCost} db={db} />
                 </Paper>
-
-                {/* 🟨 ReportGenerator */}
                 <Paper sx={{ p: 3, boxShadow: 3, maxWidth: "90%" }}>
-                    <ReportGenerator db={db} setReportData={setReportData} />
+                    <ReportGenerator db={db} setReportData={setReportData} setReportTitle={setReportTitle} />
                 </Paper>
-
-                {/* 🔵 PieChart */}
                 <Paper sx={{ p: 3, boxShadow: 3, width: "100%", maxHeight: 500 }}>
-                    <PieChart costs={costs} />
+                    <PieChart costs={reportData || costs} /> {/* ✅ עכשיו מציג מספר מוצרים לכל קטגוריה */}
                 </Paper>
             </Box>
 
-            {/* 📌 הכנסת הדוח לרשת כדי לשמור על מרווחים אחידים */}
-            <Box
-                sx={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr",
-                    gap: 4, // ✅ אותו מרווח כמו בשאר האלמנטים
-                    mt: 4, // ✅ שומר רווח מהגריד הראשי
-                }}
-            >
-                {/* 🟠 ריבוע קבוע למטה לדוח הספציפי */}
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr", gap: 4, mt: 4 }}>
                 <Paper sx={{ p: 3, boxShadow: 3, maxWidth: "90%", margin: "auto" }}>
-                    <Typography variant="h6" align="center" sx={{ mb: 2 }}>Filtered Report</Typography>
+                    <Typography variant="h6" align="center" sx={{ mb: 2 }}>{reportTitle}</Typography>
                     {reportData && reportData.length > 0 ? (
                         <ReportTable costs={reportData} setCosts={setCosts} setEditingCost={setEditingCost} db={db} />
                     ) : (
