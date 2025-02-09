@@ -5,9 +5,9 @@
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     background-color: #ffffff;
-    height: 100%; /* Match height of AddCost */
+    height: 100%;
 }
 
 table {
@@ -17,7 +17,7 @@ table {
     font-size: 18px;
     text-align: left;
     border: 1px solid #ddd;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
     border-radius: 8px;
     overflow: hidden;
@@ -30,8 +30,7 @@ thead {
     font-weight: bold;
 }
 
-th,
-td {
+th, td {
     padding: 12px 15px;
     border-bottom: 1px solid #ddd;
 }
@@ -59,6 +58,7 @@ tr:nth-child(even) {
     height: 150px;
 }
 
+/* 🎯 עיצוב הכפתורים */
 button {
     padding: 10px 20px;
     font-size: 16px;
@@ -69,6 +69,7 @@ button {
     transition: background-color 0.3s ease;
 }
 
+/* 🔥 כפתור מחיקה */
 .delete-button {
     background-color: #dc3545;
     color: white;
@@ -83,6 +84,7 @@ button {
     cursor: not-allowed;
 }
 
+/* ✏️ כפתור עריכה */
 .edit-button {
     background-color: #007bff;
     color: white;
@@ -92,21 +94,21 @@ button {
     background-color: #0056b3;
 }
 
+/* 🔥 כפתור עריכה כבוי */
 .edit-button:disabled {
     background-color: #ddd;
     cursor: not-allowed;
 }
 
-.table-title {
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
+/* 🎯 ווידוא שהסמן יישאר אסור גם בלי hover */
+.edit-button:disabled:hover, .delete-button:disabled:hover {
+    cursor: not-allowed;
 }
 
+/* 🎯 סידור הכפתורים */
 .button-container {
     display: flex;
     justify-content: center;
     margin-top: 10px;
+    gap: 10px; /* ריווח בין הכפתורים */
 }

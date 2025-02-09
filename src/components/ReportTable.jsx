@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Checkbox, Box, Button, Paper } from "@mui/material";
 import "./ReportTable.css";
 
 const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
@@ -13,102 +14,87 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
     };
 
     const toggleSelectAll = () => {
-        if (selectedRows.length === costs.length) {
-            setSelectedRows([]);
-        } else {
-            setSelectedRows(costs.map((_, index) => index));
-        }
+        setSelectedRows(selectedRows.length === costs.length ? [] : costs.map((_, index) => index));
     };
 
     const handleDelete = async () => {
+        if (selectedRows.length === 0) return;
+
+        // 🎯 הצגת הודעת אישור לפני המחיקה
+        const confirmDelete = window.confirm("Are you sure you want to delete?");
+        if (!confirmDelete) return; // אם המשתמש לחץ "לא", אין מחיקה
+
         try {
             const toDelete = selectedRows.map((index) => costs[index]);
-            console.log("Items to delete:", toDelete);
 
             for (const cost of toDelete) {
                 await db.delete("costs", cost.id);
             }
 
-            const updatedCosts = costs.filter((_, index) => !selectedRows.includes(index));
-            setCosts(updatedCosts);
+            setCosts((prev) => prev.filter((_, index) => !selectedRows.includes(index)));
             setSelectedRows([]);
-            console.log("Items deleted successfully.");
         } catch (error) {
             console.error("Error deleting items:", error);
         }
     };
 
     const handleEdit = () => {
-        const selectedCost = costs[selectedRows[0]];
-        console.log("Setting cost for editing:", selectedCost);
-        setEditingCost(selectedCost);
+        if (setEditingCost && selectedRows.length === 1) {
+            const selectedCost = costs[selectedRows[0]];
+            console.log("Setting cost for editing:", selectedCost);
+            setEditingCost(selectedCost); // ✅ עכשיו הוא ישלח גם את הנתון ל-AddCost
+        }
     };
 
+
     return (
-        <div className="report-table-wrapper">
-            <h2 className="table-title">Cost Report Table</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>
-                            <input
-                                type="checkbox"
-                                checked={selectedRows.length === costs.length && costs.length > 0}
+        <TableContainer component={Paper} sx={{ maxHeight: 500, overflowY: "auto", width: "100%" }}>
+            <Table stickyHeader>
+                <TableHead>
+                    <TableRow>
+                        <TableCell padding="checkbox">
+                            <Checkbox
+                                indeterminate={selectedRows.length > 0 && selectedRows.length < costs.length}
+                                checked={selectedRows.length === costs.length}
                                 onChange={toggleSelectAll}
                             />
-                        </th>
-                        <th>Sum</th>
-                        <th>Category</th>
-                        <th>Description</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {costs.length > 0 ? (
-                        costs.map((cost, index) => (
-                            <tr
-                                key={index}
-                                className={selectedRows.includes(index) ? "selected-row" : ""}
-                            >
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedRows.includes(index)}
-                                        onChange={() => toggleRowSelection(index)}
-                                    />
-                                </td>
-                                <td>{cost.sum}</td>
-                                <td>{cost.category}</td>
-                                <td>{cost.description}</td>
-                                <td>{new Date(cost.date).toLocaleDateString()}</td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="5" className="no-data">
-                                No costs to display
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-            <div className="button-container">
-                <button
-                    className="delete-button"
-                    onClick={handleDelete}
-                    disabled={selectedRows.length === 0}
-                >
+                        </TableCell>
+                        {/* ✅ קביעת רוחב מינימלי רק לעמודות המחיר והתאריך */}
+                        <TableCell sx={{ width: "80px", textAlign: "center" }}>Amount</TableCell>
+                        <TableCell sx={{ width: "25%", textAlign: "left" }}>Category</TableCell>
+                        <TableCell sx={{ textAlign: "left" }}>Description</TableCell>
+                        <TableCell sx={{ width: "120px", textAlign: "center" }}>Date</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {costs.map((cost, index) => (
+                        <TableRow key={cost.id} selected={selectedRows.includes(index)}>
+                            <TableCell padding="checkbox">
+                                <Checkbox
+                                    checked={selectedRows.includes(index)}
+                                    onChange={() => toggleRowSelection(index)}
+                                />
+                            </TableCell>
+                            {/* ✅ יישור נתונים ויישום הגדרות רוחב */}
+                            <TableCell sx={{ width: "80px", textAlign: "center" }}>{cost.sum}</TableCell>
+                            <TableCell sx={{ width: "25%", textAlign: "left" }}>{cost.category}</TableCell>
+                            <TableCell sx={{ textAlign: "left" }}>{cost.description}</TableCell>
+                            <TableCell sx={{ width: "120px", textAlign: "center" }}>{cost.date}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+
+            {/* 🟦 כפתורי מחיקה ועריכה */}
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 2, gap: 2 }}>
+                <Button variant="contained" color="error" onClick={handleDelete} disabled={selectedRows.length === 0}>
                     Delete Selected
-                </button>
-                <button
-                    className="edit-button"
-                    onClick={handleEdit}
-                    disabled={selectedRows.length !== 1}
-                >
+                </Button>
+                <Button variant="contained" color="primary" onClick={handleEdit} disabled={selectedRows.length !== 1}>
                     Edit Selected
-                </button>
-            </div>
-        </div>
+                </Button>
+            </Box>
+        </TableContainer>
     );
 };
 

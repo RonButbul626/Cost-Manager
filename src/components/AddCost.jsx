@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import "./AddCost.css";
+import { TextField, Button, Grid, MenuItem, Box, Typography } from "@mui/material";
 
-const AddCost = ({ db, setCosts, editingCost, setEditingCost, filteredCosts, setFilteredCosts }) => {
+const categories = [
+    "Fruits and vegetables", "Dairy", "Bakery", "Meat and Seafood",
+    "Beverages", "Packaged and Canned Goods", "Frozen Foods",
+    "Snacks and Confectionery", "Personal Care and Household Items",
+    "Health and Wellness", "Baby Products", "Pet Supplies",
+    "Cooking and Baking Essentials", "Alcohol and Tobacco Products",
+    "Ready-to-Eat and Prepared Foods", "Electronics", "Clothing and Footwear", "Others"
+];
+
+const AddCost = ({ db, setCosts, editingCost, setEditingCost, isEditing }) => {
     const [sum, setSum] = useState("");
     const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
@@ -9,7 +18,6 @@ const AddCost = ({ db, setCosts, editingCost, setEditingCost, filteredCosts, set
 
     useEffect(() => {
         if (editingCost) {
-            console.log("Editing cost loaded:", editingCost);
             setSum(editingCost.sum || "");
             setCategory(editingCost.category || "");
             setDescription(editingCost.description || "");
@@ -17,102 +25,122 @@ const AddCost = ({ db, setCosts, editingCost, setEditingCost, filteredCosts, set
         }
     }, [editingCost]);
 
-    const addOrUpdateCosts = async (newCost) => {
-        try {
-            if (newCost.id) {
-                // Update existing cost
-                console.log("Updating cost:", newCost);
-                await db.addOrUpdate("costs", newCost);
-                setCosts((prev) =>
-                    prev.map((cost) => (cost.id === newCost.id ? newCost : cost))
-                );
-            } else {
-                // Add new cost
-                console.log("Adding new cost:", newCost);
-                const id = await db.addOrUpdate("costs", newCost); // `id` will be automatically handled by IndexedDB
-                setCosts((prev) => [...prev, { ...newCost, id }]);
-            }
+    const checkIfProductExists = async (newCost) => {
+        const allCosts = await db.getAll("costs");
 
-            if (filteredCosts.length > 0) {
-                setFilteredCosts((prev) =>
-                    prev.map((cost) =>
-                        cost.id === newCost.id ? newCost : cost
-                    )
-                );
-            }
-        } catch (error) {
-            console.error("Error adding/updating cost:", error);
+        // 🎯 אם זה עריכה (`Edit Selected`) אבל השם לא השתנה – לא מבצעים בדיקה
+        if (isEditing && editingCost.description === newCost.description) {
+            return false;
         }
+
+        // 🔍 בדיקה אם המוצר כבר קיים בכל הקטגוריות
+        const existingProduct = allCosts.find(cost =>
+            cost.description.toLowerCase() === newCost.description.toLowerCase()
+        );
+
+        if (existingProduct) {
+            alert(`The product already exists:\n
+                Name: ${existingProduct.description}\n
+                Category: ${existingProduct.category}\n
+                Price: ${existingProduct.sum}\n
+                Date: ${existingProduct.date}`);
+            return true;
+        }
+        return false;
     };
 
-    const handleAddOrEdit = () => {
+    const addOrUpdateCosts = async () => {
+        // 🎯 בדיקה שכל השדות מלאים
         if (!sum || !category || !description || !date) {
-            alert("Please fill in all fields.");
+            alert("All fields must be filled!");
             return;
         }
 
-        const newCost = {
-            id: editingCost ? editingCost.id : undefined,
-            sum: parseFloat(sum),
-            category,
-            description,
-            date,
-        };
+        if (sum < 1 || sum > 9999) {
+            alert("The amount must be between 1 and 9999.");
+            return;
+        }
 
-        addOrUpdateCosts(newCost);
+        const newCost = { sum, category, description, date, id: editingCost?.id || Date.now() };
 
+        // ✅ רק אם מדובר בהוספת מוצר חדש **או** עריכה שבה השם השתנה - מבצעים בדיקה
+        if ((isEditing || !editingCost) && await checkIfProductExists(newCost)) return;
+
+        await db.addOrUpdate("costs", newCost);
+        setCosts(prev =>
+            editingCost ? prev.map(c => (c.id === newCost.id ? newCost : c)) : [...prev, newCost]
+        );
+
+        alert("Product added successfully!");
+        setEditingCost(null);
         setSum("");
         setCategory("");
         setDescription("");
         setDate("");
-        setEditingCost(null);
     };
 
     return (
-        <div className="add-cost-container">
-            <h2>{editingCost ? "Edit Cost" : "Add New Cost"}</h2>
-            <div className="form-group">
-                <label>Sum:</label>
-                <input
-                    type="number"
-                    value={sum}
-                    onChange={(e) => setSum(e.target.value)}
-                />
-            </div>
-            <div className="form-group">
-                <label>Category:</label>
-                <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                >
-                    <option value="">Select Category</option>
-                    <option value="Fruits and vegetables">Fruits and vegetables</option>
-                    <option value="Dairy">Dairy</option>
-                    <option value="Transportation">Transportation</option>
-                    <option value="Utilities">Utilities</option>
-                    <option value="Entertainment">Entertainment</option>
-                </select>
-            </div>
-            <div className="form-group">
-                <label>Description:</label>
-                <input
-                    type="text"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
-            </div>
-            <div className="form-group">
-                <label>Date:</label>
-                <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                />
-            </div>
-            <button className="add-button" onClick={handleAddOrEdit}>
-                {editingCost ? "Update Cost" : "Add Cost"}
-            </button>
-        </div>
+        <Box sx={{ maxWidth: 500, margin: "auto", mt: 3 }}>
+            <Typography variant="h6" align="center">
+                {editingCost ? "Edit Expense" : "Add an Expense"}
+            </Typography>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
+                    <TextField
+                        label="Amount"
+                        fullWidth
+                        type="number"
+                        value={sum}
+                        onChange={(e) => setSum(e.target.value)}
+                        inputProps={{ min: 1, max: 9999, style: { textAlign: "right" } }}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        select
+                        label="Category"
+                        fullWidth
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        SelectProps={{
+                            MenuProps: {
+                                PaperProps: {
+                                    style: { maxHeight: 250 } // ✅ מגביל את הגובה ל-6 ערכים עם גלילה
+                                },
+                                anchorOrigin: {
+                                    vertical: "bottom",
+                                    horizontal: "left"
+                                },
+                                transformOrigin: {
+                                    vertical: "top",
+                                    horizontal: "left"
+                                }
+                            }
+                        }}
+                    >
+                        {categories.map(cat => (
+                            <MenuItem key={cat} value={cat}>
+                                {cat}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <TextField label="Description" fullWidth value={description} onChange={(e) => setDescription(e.target.value)} />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField type="date" fullWidth value={date} onChange={(e) => setDate(e.target.value)} />
+                </Grid>
+                <Grid item xs={12}>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <Button variant="contained" color="primary" onClick={addOrUpdateCosts}>
+                            {editingCost ? "Update Expense" : "Add Expense"}
+                        </Button>
+                    </Box>
+                </Grid>
+            </Grid>
+        </Box>
     );
 };
 
