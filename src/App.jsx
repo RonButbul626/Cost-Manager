@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import AddCost from "./components/AddCost";
 import ReportTable from "./components/ReportTable";
 import ReportGenerator from "./components/ReportGenerator";
+import DetailedReport from "./components/DetailedReport"; // ✅ הוספת הקומפוננטה החדשה
 import PieChart from "./components/PieChart";
 import { Idb } from "./utils/Idb";
 import { Container, Typography, Box, Paper } from "@mui/material";
@@ -12,6 +13,7 @@ const App = () => {
     const [costs, setCosts] = useState([]);
     const [editingCost, setEditingCost] = useState(null);
     const [filteredCosts, setFilteredCosts] = useState([]);
+    const [reportData, setReportData] = useState(null); // ✅ משתנה לניהול הדוח הנפרד
 
     useEffect(() => {
         const initDB = async () => {
@@ -21,6 +23,11 @@ const App = () => {
         };
         initDB();
     }, []);
+
+    // ✅ בדיקה האם הנתונים מתקבלים כמו שצריך
+    useEffect(() => {
+        console.log("Updated reportData:", reportData);
+    }, [reportData]);
 
     return (
         <Container maxWidth="xl" sx={{ padding: 2, overflowX: "hidden" }}>
@@ -48,11 +55,11 @@ const App = () => {
             <Box
                 sx={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 3fr", // ✅ הרחבנו את ReportTable כך שיתאים ל-PieChart
+                    gridTemplateColumns: "1fr 3fr",
                     gridTemplateRows: "auto auto",
                     gap: 2,
                     alignItems: "stretch",
-                    mt: 10, // ✅ משאיר רווח מתחת לכותרת הקבועה
+                    mt: 10,
                 }}
             >
                 {/* 🟩 AddCost בצד שמאל קטן יותר */}
@@ -60,21 +67,25 @@ const App = () => {
                     <AddCost db={db} setCosts={setCosts} editingCost={editingCost} setEditingCost={setEditingCost} />
                 </Paper>
 
-                {/* 🟦 ReportTable רחב יותר - שווה בגודל ל-PieChart */}
+                {/* 🟦 ReportTable רחב יותר */}
                 <Paper sx={{ p: 2, boxShadow: 3, maxHeight: 500, overflowY: "auto", width: "100%" }}>
                     <ReportTable costs={filteredCosts.length > 0 ? filteredCosts : costs} setCosts={setCosts} setEditingCost={setEditingCost} db={db} />
                 </Paper>
 
                 {/* 🟨 GenerateReport - ממורכז לשמאל */}
                 <Paper sx={{ p: 2, boxShadow: 3, maxWidth: "90%" }}>
-                    <ReportGenerator db={db} setFilteredCosts={setFilteredCosts} />
+                    <ReportGenerator db={db} setFilteredCosts={setFilteredCosts} setReportData={setReportData} />
+                    {/* ✅ מעביר את `setReportData` כדי לעדכן את הדוח הנפרד */}
                 </Paper>
 
-                {/* 🔵 PieChart רחב יותר - כעת זהה לרוחב של ReportTable */}
+                {/* 🔵 PieChart רחב יותר */}
                 <Paper sx={{ p: 2, boxShadow: 3, width: "100%", maxHeight: 500 }}>
                     <PieChart costs={filteredCosts.length > 0 ? filteredCosts : costs} />
                 </Paper>
             </Box>
+
+            {/* 🟠 הוספת DetailedReport בנפרד למטה */}
+            <DetailedReport reportData={reportData} />
         </Container>
     );
 };
