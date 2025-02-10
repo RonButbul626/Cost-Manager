@@ -20,9 +20,9 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
     const handleDelete = async () => {
         if (selectedRows.length === 0) return;
 
-        // 🎯 הצגת הודעת אישור לפני המחיקה
+
         const confirmDelete = window.confirm("Are you sure you want to delete?");
-        if (!confirmDelete) return; // אם המשתמש לחץ "לא", אין מחיקה
+        if (!confirmDelete) return;
 
         try {
             const toDelete = selectedRows.map((index) => costs[index]);
@@ -42,7 +42,7 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
         if (setEditingCost && selectedRows.length === 1) {
             const selectedCost = costs[selectedRows[0]];
             console.log("Setting cost for editing:", selectedCost);
-            setEditingCost(selectedCost); // ✅ עכשיו הוא ישלח גם את הנתון ל-AddCost
+            setEditingCost(selectedCost);
         }
     };
 
@@ -59,7 +59,7 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
                                 onChange={toggleSelectAll}
                             />
                         </TableCell>
-                        {/* ✅ קביעת רוחב מינימלי רק לעמודות המחיר והתאריך */}
+
                         <TableCell sx={{ width: "80px", textAlign: "center" }}>Amount</TableCell>
                         <TableCell sx={{ width: "25%", textAlign: "left" }}>Category</TableCell>
                         <TableCell sx={{ textAlign: "left" }}>Description</TableCell>
@@ -75,7 +75,7 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
                                     onChange={() => toggleRowSelection(index)}
                                 />
                             </TableCell>
-                            {/* ✅ יישור נתונים ויישום הגדרות רוחב */}
+
                             <TableCell sx={{ width: "80px", textAlign: "center" }}>{cost.sum}</TableCell>
                             <TableCell sx={{ width: "25%", textAlign: "left" }}>{cost.category}</TableCell>
                             <TableCell sx={{ textAlign: "left" }}>{cost.description}</TableCell>
@@ -85,7 +85,7 @@ const ReportTable = ({ costs, setCosts, setEditingCost, db }) => {
                 </TableBody>
             </Table>
 
-            {/* 🟦 כפתורי מחיקה ועריכה */}
+
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2, gap: 2 }}>
                 <Button variant="contained" color="error" onClick={handleDelete} disabled={selectedRows.length === 0}>
                     Delete Selected

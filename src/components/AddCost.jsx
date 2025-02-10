@@ -28,12 +28,12 @@ const AddCost = ({ db, setCosts, editingCost, setEditingCost, isEditing }) => {
     const checkIfProductExists = async (newCost) => {
         const allCosts = await db.getAll("costs");
 
-        // 🎯 אם זה עריכה (`Edit Selected`) אבל השם לא השתנה – לא מבצעים בדיקה
+        // If the product is being edited and the name has not changed
         if (isEditing && editingCost.description === newCost.description) {
             return false;
         }
 
-        // 🔍 בדיקה אם המוצר כבר קיים בכל הקטגוריות
+        // Checking if the product already exists
         const existingProduct = allCosts.find(cost =>
             cost.description.toLowerCase() === newCost.description.toLowerCase()
         );
@@ -50,7 +50,7 @@ const AddCost = ({ db, setCosts, editingCost, setEditingCost, isEditing }) => {
     };
 
     const addOrUpdateCosts = async () => {
-        // 🎯 בדיקה שכל השדות מלאים
+        // Checking if all fields are filled
         if (!sum || !category || !description || !date) {
             alert("All fields must be filled!");
             return;
@@ -63,7 +63,7 @@ const AddCost = ({ db, setCosts, editingCost, setEditingCost, isEditing }) => {
 
         const newCost = { sum, category, description, date, id: editingCost?.id || Date.now() };
 
-        // ✅ רק אם מדובר בהוספת מוצר חדש **או** עריכה שבה השם השתנה - מבצעים בדיקה
+
         if ((isEditing || !editingCost) && await checkIfProductExists(newCost)) return;
 
         await db.addOrUpdate("costs", newCost);
@@ -105,7 +105,7 @@ const AddCost = ({ db, setCosts, editingCost, setEditingCost, isEditing }) => {
                         SelectProps={{
                             MenuProps: {
                                 PaperProps: {
-                                    style: { maxHeight: 250 } // ✅ מגביל את הגובה ל-6 ערכים עם גלילה
+                                    style: { maxHeight: 250 }
                                 },
                                 anchorOrigin: {
                                     vertical: "bottom",

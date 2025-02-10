@@ -12,7 +12,7 @@ const App = () => {
     const [costs, setCosts] = useState([]);
     const [editingCost, setEditingCost] = useState(null);
     const [reportData, setReportData] = useState(null);
-    const [reportTitle, setReportTitle] = useState("Filtered Report"); // ✅ כותרת דינמית לדוח
+    const [reportTitle, setReportTitle] = useState("Filtered Report");
 
     useEffect(() => {
         const initDB = async () => {
@@ -56,7 +56,7 @@ const App = () => {
                     <ReportGenerator db={db} setReportData={setReportData} setReportTitle={setReportTitle} />
                 </Paper>
                 <Paper sx={{ p: 3, boxShadow: 3, width: "100%", maxHeight: 500 }}>
-                    <PieChart costs={reportData || costs} /> {/* ✅ עכשיו מציג מספר מוצרים לכל קטגוריה */}
+                    <PieChart costs={reportData || costs} />
                 </Paper>
             </Box>
 

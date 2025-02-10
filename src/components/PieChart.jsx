@@ -13,17 +13,17 @@ const PieChart = ({ costs }) => {
     const canvasRef = useRef();
     const chartInstanceRef = useRef(null);
 
-    // 🎯 שינוי לוגיקה: עכשיו מחשב **מספר מוצרים בכל קטגוריה** במקום סכום
+    // Calculate data for the chart
     const data = useMemo(() => {
         if (!costs?.length) return null;
         return costs.reduce((acc, cost) => {
-            acc[cost.category] = (acc[cost.category] || 0) + 1; // ✅ סופרים את מספר הפריטים ולא מחברים סכום
+            acc[cost.category] = (acc[cost.category] || 0) + 1;
             return acc;
         }, {});
     }, [costs]);
 
     useEffect(() => {
-        if (!data) return; // מניעת רינדור כאשר אין נתונים
+        if (!data) return;
 
         const ctx = canvasRef.current.getContext("2d");
 
@@ -44,7 +44,7 @@ const PieChart = ({ costs }) => {
             },
             options: {
                 plugins: {
-                    legend: { display: false } // ✅ השארנו את המקרא כפי שהיה
+                    legend: { display: false }
                 }
             }
         });
@@ -58,7 +58,7 @@ const PieChart = ({ costs }) => {
 
     return (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 3 }}>
-            {/* ✅ מקרא (Legend) בצד שמאל */}
+
             {data && (
                 <Box sx={{ display: "flex", flexWrap: "wrap", maxWidth: 200, mr: 3 }}>
                     {Object.keys(data).map((category, index) => (
@@ -79,7 +79,7 @@ const PieChart = ({ costs }) => {
                 </Box>
             )}
 
-            {/* ✅ הגרף עצמו */}
+
             <Box sx={{ textAlign: "center" }}>
                 <Typography variant="h6">Expense Breakdown</Typography>
                 {data ? (

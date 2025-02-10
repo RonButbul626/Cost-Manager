@@ -58,7 +58,6 @@ tr:nth-child(even) {
     height: 150px;
 }
 
-/* 🎯 עיצוב הכפתורים */
 button {
     padding: 10px 20px;
     font-size: 16px;
@@ -69,7 +68,6 @@ button {
     transition: background-color 0.3s ease;
 }
 
-/* 🔥 כפתור מחיקה */
 .delete-button {
     background-color: #dc3545;
     color: white;
@@ -84,7 +82,6 @@ button {
     cursor: not-allowed;
 }
 
-/* ✏️ כפתור עריכה */
 .edit-button {
     background-color: #007bff;
     color: white;
@@ -94,21 +91,18 @@ button {
     background-color: #0056b3;
 }
 
-/* 🔥 כפתור עריכה כבוי */
 .edit-button:disabled {
     background-color: #ddd;
     cursor: not-allowed;
 }
 
-/* 🎯 ווידוא שהסמן יישאר אסור גם בלי hover */
 .edit-button:disabled:hover, .delete-button:disabled:hover {
     cursor: not-allowed;
 }
 
-/* 🎯 סידור הכפתורים */
 .button-container {
     display: flex;
     justify-content: center;
     margin-top: 10px;
-    gap: 10px; /* ריווח בין הכפתורים */
+    gap: 10px;
 }
